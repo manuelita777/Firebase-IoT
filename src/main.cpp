@@ -144,5 +144,57 @@ void loop ()
       Serial.println("FAILED");
       Serial.println("  REASON: " + fbdo.errorReason());
     }
+
+    // Read sample int
+    int intRead = 0;
+    Serial.print("read/int: ");
+    if (Firebase.RTDB.getInt(&fbdo, "read/int", &intRead))
+    {
+      Serial.println(intRead);
+    }
+    else
+    {
+      Serial.println("FAILED");
+      Serial.println("  REASON: " + fbdo.errorReason());
+    }
+
+    // Read sample float
+    float floatRead = 0.0;
+    Serial.print("read/float: ");
+    if (Firebase.RTDB.getFloat(&fbdo, "read/float", &floatRead))
+    {
+      Serial.println(floatRead);
+    }
+    else
+    {
+      Serial.println("FAILED");
+      Serial.println("  REASON: " + fbdo.errorReason());
+    }
+
+    // Read sample boolean
+    bool boolRead = false;
+    Serial.print("read/boolean: ");
+    if (Firebase.RTDB.getBool(&fbdo, "read/boolean", &boolRead))
+    {
+      Serial.println(boolRead);
+    }
+    else
+    {
+      Serial.println("FAILED");
+      Serial.println("  REASON: " + fbdo.errorReason());
+    }
+
+    // Read sample string
+    String stringRead = "";
+    Serial.print("read/string: ");
+    if (Firebase.RTDB.getString(&fbdo, "read/string", &stringRead))
+    {
+      Serial.println(stringRead);
+    }
+    else
+    {
+      Serial.println("FAILED");
+      Serial.println("  REASON: " + fbdo.errorReason());
+    }
   }
 }
