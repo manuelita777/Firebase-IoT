@@ -6,6 +6,15 @@
 #include <addons/TokenHelper.h>
 #include <addons/RTDBHelper.h>
 
+// Timestamp
+String getLocalTimeISO();
+String getLocalTimeUNIX();
+
+// NTP
+#define NTP_SERVER "YOUR_NTP_SERVER"
+#define NTP_GMT_OFFSET_SEC 0
+#define NTP_DAYLIGHT_OFFSET_SEC 0
+
 // WiFi credentials
 #define WIFI_SSID "YOUR_SSID"
 #define WIFI_PASSWORD "YOUR_PASSWORD"
@@ -43,6 +52,9 @@ void setup()
   Serial.println(WiFi.localIP());
   Serial.println();
 
+  // Initialize NTP
+  configTime(NTP_GMT_OFFSET_SEC, NTP_DAYLIGHT_OFFSET_SEC, NTP_SERVER);
+
   // Configure Firebase
   config.api_key = API_KEY;
   config.database_url = DATABASE_URL;
@@ -72,7 +84,7 @@ void loop ()
   float floatValue = 0.0;
   static bool boolValue = true;
 
-  if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 10000 || sendDataPrevMillis == 0))
+  if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 30000 || sendDataPrevMillis == 0))
   {
     // Firebase is ready, we are signup and 10 seconds has passed
     // Save current time
@@ -196,5 +208,42 @@ void loop ()
       Serial.println("FAILED");
       Serial.println("  REASON: " + fbdo.errorReason());
     }
+
+    // Print time
+    String timestamp_unix = getLocalTimeUNIX();
+    Serial.println("UNIX: " + timestamp_unix);
+
+    String timestamp_iso = getLocalTimeISO();
+    Serial.println("ISO: " + timestamp_iso);
   }
+}
+
+String getLocalTimeISO()
+{
+  struct tm timeinfo;
+  char buffer[20];
+
+  // Get local time
+  if(!getLocalTime(&timeinfo))
+  {
+    return "NTP Error!";
+  }
+
+  // Obtain ISO 8601 timestamp
+  strftime(buffer, sizeof(buffer), "%Y-%m-%dT%H:%M:%S", &timeinfo);
+  return String(buffer);
+}
+
+String getLocalTimeUNIX()
+{
+  struct tm timeinfo;
+
+  // Get local time
+  if(!getLocalTime(&timeinfo))
+  {
+    return "NTP Error!";
+  }
+
+  // Obtain UNIX timestamp
+  return String(mktime(&timeinfo));
 }
