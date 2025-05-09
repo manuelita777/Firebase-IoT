@@ -21,8 +21,6 @@ String getLocalTimeUNIX();
 #define NTP_GMT_OFFSET_SEC 3600
 #define NTP_DAYLIGHT_OFFSET_SEC 3600
 
-
-
 // Firebase objects
 FirebaseData fbdo;
 FirebaseAuth auth;
@@ -92,23 +90,20 @@ void loop ()
   int green=0;
   int blue=0;
   bool bb =false;
-  String mitiempo = getLocalTimeUNIX();
-  String miti = getLocalTimeISO();
-
-  digitalWrite(14,HIGH);
-  digitalWrite(27,HIGH);
+  
   static int intValue = 0;
   float floatValue = 0.0;
   static bool boolValue = true;
   
-analogWrite(27, red);
-  analogWrite(26, green);
-  analogWrite(25, blue);
   if (Firebase.ready() && signupOK && (millis() - sendDataPrevMillis > 10000 || sendDataPrevMillis == 0))
   {
+    
     // Firebase is ready, we are signup and 10 seconds has passed
     // Save current time
     sendDataPrevMillis = millis();
+
+    String mitiempo = getLocalTimeUNIX();
+    String miti = getLocalTimeISO();
 
     // Write sample int
     Serial.print("INT WRITE ");
@@ -202,11 +197,11 @@ Serial.print("BOOLEAN WRITE ");
     }*/
 
     // Read sample int
-    int intRead = 0;
+    
     Serial.print("read/int: ");
-    if (Firebase.RTDB.getInt(&fbdo, "actuador/regb/blue", &intRead))
+    if (Firebase.RTDB.getInt(&fbdo, "actuador/regb/blue", &red))
     {
-      Serial.println(intRead);
+      Serial.println(red);
     }
     else
     {
@@ -215,11 +210,10 @@ Serial.print("BOOLEAN WRITE ");
     }
 
 
-    int intRead2 = 0;
     Serial.print("read/int: ");
-    if (Firebase.RTDB.getInt(&fbdo, "actuador/regb/green", &intRead2))
+    if (Firebase.RTDB.getInt(&fbdo, "actuador/regb/green", &green))
     {
-      Serial.println(intRead);
+      Serial.println(green);
     }
     else
     {
@@ -227,11 +221,11 @@ Serial.print("BOOLEAN WRITE ");
       Serial.println("  REASON: " + fbdo.errorReason());
     }
 
-    int intRead3 = 0;
+    
     Serial.print("read/int: ");
-    if (Firebase.RTDB.getInt(&fbdo, "actuador/regb/red", &intRead3))
+    if (Firebase.RTDB.getInt(&fbdo, "actuador/regb/red", &blue))
     {
-      Serial.println(intRead);
+      Serial.println(blue);
     }
     else
     {
@@ -253,14 +247,12 @@ Serial.print("BOOLEAN WRITE ");
     }*/
 
     // Read sample boolean
-    bool boolRead = false;
+    
     Serial.print("read/boolean: ");
-    if (Firebase.RTDB.getBool(&fbdo, "actuador/led", &boolRead))
+    if (Firebase.RTDB.getBool(&fbdo, "actuador/led", &bb))
     {
-      Serial.println(boolRead);
-      bb=boolRead;
-      digitalWrite(14,bb);
-      ;
+      Serial.println(bb);
+      
     }
     else
     {
@@ -289,10 +281,11 @@ Serial.print("BOOLEAN WRITE ");
     Serial.println("ISO: " + timestamp_iso);
 */
 
-    blue=intRead;
-    green=intRead2;
-    red=intRead;
     
+      analogWrite(27, red);
+    analogWrite(26, green);
+   analogWrite(25, blue);
+   digitalWrite(14,bb);
     
   }
 
@@ -300,11 +293,8 @@ Serial.print("BOOLEAN WRITE ");
 
   
   
-  analogWrite(27, red);
-  analogWrite(26, green);
-  analogWrite(25, blue);
+
   
- delay(300);
 
 
 }
